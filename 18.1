@@ -1,0 +1,141 @@
+
+class Node:
+    def __init__(self, element):
+        self.element = element
+        self.next = None
+
+    def getData(self):
+        return self.element
+
+    def getNext(self):
+        return self.next
+
+    def setNext(self, newnext):
+        self.next = newnext
+
+
+class LinkedList:
+    def __init__(self):
+        self.secondLength = 0
+        self.__head = None
+        self.__tail = None
+        self.__size = 0
+
+    def __str__(self):
+        result = "["
+
+        current = self.__head
+        while current is not None:
+            result += str(current.element)
+            current = current.next
+            if current is not None:
+                result += ", "
+            else:
+                result += "]"
+
+        return result
+
+    def addFirst(self, e):
+        newNode = Node(e)
+        newNode.next = self.__head
+        self.__head = newNode
+        self.__size += 1
+
+        if self.__tail is None:
+            self.__tail = self.__head
+
+    def addLast(self, e):
+        newNode = Node(e)
+
+        if self.__tail is None:
+            self.__head = self.__tail = newNode
+        else:
+            self.__tail.next = newNode
+            self.__tail = self.__tail.next
+        self.__size += 1
+
+    def addAll(self, otherList):
+        for i in otherList:
+            self.addLast(i)
+
+    def removeAll(self, otherList):
+        self.secondLength = otherList.__size
+        if self.__size == 0:
+            return None
+        else:
+            current = self.__head
+
+            for i in range(self.secondLength - 1):
+                current = current.next
+
+            temp = self.__tail
+            self.__tail = current
+            self.__tail.next = None
+            self.__size -= self.secondLength
+            return temp.element
+
+    def retainAll(self, otherlist):
+        current = self.__head
+        previous = None
+        count = 0
+        while current is not None:
+            if current.element == otherlist.__head:
+                # if this is the first node (head)
+                count += 1
+                if previous is not None:
+                    previous.next = current.next
+                else:
+                    self.__head = current.next
+            previous = current
+            current = current.next
+            self.__size -= 1
+        else:
+            current = self.__head
+
+            for i in range(self.secondLength - 3):
+                current = current.next
+
+            temp = self.__tail
+            self.__tail = current
+            self.__tail.next = None
+            self.__size -= self.secondLength
+            return temp.element
+
+    def __iter__(self):
+        return LinkedListIterator(self.__head)
+
+
+class LinkedListIterator:
+    def __init__(self, head):
+        self.current = head
+
+    def __next__(self):
+        if self.current is None:
+            raise StopIteration
+        else:
+            element = self.current.element
+            self.current = self.current.next
+            return element
+
+
+def main():
+    list1 = LinkedList()
+    list2 = LinkedList()
+    listA = ["Tom", "George", "Peter", "Jean", "Jane"]
+    listB = ["Tom", "George", "Micheal", "Michelle", "Daniel"]
+    list1.addAll(listA)
+    list2.addAll(listB)
+    list1.addAll(list2)
+
+    print(list1)
+
+    list1.removeAll(list2)
+
+    print(list1)
+
+    list1.retainAll(list2)
+
+    print(list1)
+
+
+main()
